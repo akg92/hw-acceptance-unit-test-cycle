@@ -1,3 +1,4 @@
+# require 'byebug'
 class MoviesController < ApplicationController
 
   def movie_params
@@ -63,15 +64,16 @@ class MoviesController < ApplicationController
   #  movie with same director
   def director
     id = params[:id]
-    movie = Movie.find(id)
+    @movies = Movie.find_director_other_movie(id)
     # if director is not valid return 
-    if movie.director.empty?
-      flash['warning'] = "'#{movie.title}' has no director info"
+    # byebug
+    if !@movies
+      flash['warning'] = "'#{Movie.find(id).title}' has no director info"
       redirect_to movies_path
+      return
     # return main page
-    else
-      @director = movie.director
-      @movies = Movie.where(director: @director)
+    else 
+      @director = @movies[0].director
     end
   end
 
